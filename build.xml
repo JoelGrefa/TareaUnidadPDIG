@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Joel_Grefa_-_PDIG_-_Unidad1" default="run" basedir=".">
+
+    <!-- Directorios -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="main.class" value="paquete.principal.MainClass"/> <!-- Cambia esto por tu clase principal -->
+
+    <!-- Limpia todo -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compila el proyecto -->
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
+    </target>
+
+    <!-- Crea el .jar ejecutable -->
+    <target name="jar" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/Joel_Grefa_-_PDIG_-_Unidad1.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Ejecuta el programa -->
+    <target name="run" depends="jar">
+        <java jar="${dist.dir}/Joel_Grefa_-_PDIG_-_Unidad1.jar" fork="true"/>
+    </target>
+
+</project>
