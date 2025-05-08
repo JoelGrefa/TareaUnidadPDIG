@@ -39,11 +39,6 @@ public class logica_ventana implements ActionListener, ListSelectionListener, It
 		vista.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 				.put(KeyStroke.getKeyStroke("control S"), "agregar");
 		vista.contentPane.getActionMap().put("agregar", new AbstractAction() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				vista.btn_add.doClick();

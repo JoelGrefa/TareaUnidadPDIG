@@ -2,35 +2,33 @@ package vista;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.ResourceBundle;
+import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import controlador.logica_ventana;
-
+import modelo.LanguageManager;  // Importa el LanguageManager para gestionar los idiomas
 
 public class ventana extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private ResourceBundle bundle;@Override
-    public Font getFont() {
-    	// TODO Auto-generated method stub
-    	return super.getFont();
-    }
-    
 
     public JPanel contentPane;
     public JTextField txt_nombres, txt_telefono, txt_email, txt_buscar;
     public JCheckBox chb_favorito;
-    public JComboBox<Object> cmb_categoria;
+    @SuppressWarnings("rawtypes")
+    public JComboBox cmb_categoria;
     public JButton btn_add, btn_modificar, btn_eliminar, btn_exportar;
     public JTable tbl_contactos;
     public DefaultTableModel modeloTabla;
     public JLabel lbl_totalContactos, lbl_favoritos, lbl_familia, lbl_amigos, lbl_trabajo;
     public JProgressBar barraProgreso;
 
-    
+    // Asegúrate de definir estos JLabel
+    public JLabel lblFuente, lblIdioma, lblColor, lblBuscar;
+
+    public JComboBox<String> cmb_idioma;
+
     public ventana() {
         setTitle("GESTION DE CONTACTOS");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,9 +38,10 @@ public class ventana extends JFrame {
         initComponents();
 
         // Controlador
-        new logica_ventana(this);
+        new controlador.logica_ventana(this);
     }
 
+    @SuppressWarnings("deprecation")
     private void initComponents() {
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -65,6 +64,7 @@ public class ventana extends JFrame {
         // Panel Estadísticas
         JPanel panelEstadisticas = new JPanel(null);
         tabbedPane.addTab("Estadísticas", panelEstadisticas);
+
         addEstadisticasLabels(panelEstadisticas);
 
         // Panel Ajustes
@@ -73,7 +73,7 @@ public class ventana extends JFrame {
 
         // Selector de Fuente
         JLabel lblFuente = new JLabel("Seleccionar Fuente:");
-        lblFuente.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblFuente.setFont(new Font("Tahoma", Font.BOLD, 13));
         lblFuente.setBounds(25, 20, 150, 20);
         panelAjustes.add(lblFuente);
 
@@ -97,11 +97,11 @@ public class ventana extends JFrame {
 
         // Selector de Idioma
         JLabel lblIdioma = new JLabel("Seleccionar Idioma:");
-        lblIdioma.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblIdioma.setFont(new Font("Tahoma", Font.BOLD, 13));
         lblIdioma.setBounds(25, 70, 150, 20);
         panelAjustes.add(lblIdioma);
 
-        JComboBox<String> cmb_idioma = new JComboBox<>();
+        cmb_idioma = new JComboBox<>();
         cmb_idioma.setBounds(175, 70, 200, 30);
         panelAjustes.add(cmb_idioma);
 
@@ -110,9 +110,26 @@ public class ventana extends JFrame {
             cmb_idioma.addItem(idioma);
         }
 
+        // Agregar ItemListener para el ComboBox de Idiomas
+        cmb_idioma.addItemListener(e -> {
+            String selectedLanguage = (String) cmb_idioma.getSelectedItem();
+            switch (selectedLanguage) {
+                case "Español":
+                    LanguageManager.setLanguage(new Locale("es", "ES"));
+                    break;
+                case "Inglés":
+                    LanguageManager.setLanguage(new Locale("en", "US"));
+                    break;
+                case "Portugués":
+                    LanguageManager.setLanguage(new Locale("pt", "BR"));
+                    break;
+            }
+            actualizarTextoComponentes(); // Actualizar los textos de la interfaz
+        });
+
         // Selector de Color
         JLabel lblColor = new JLabel("Seleccionar Color:");
-        lblColor.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblColor.setFont(new Font("Tahoma", Font.BOLD, 13));
         lblColor.setBounds(25, 120, 150, 20);
         panelAjustes.add(lblColor);
 
@@ -129,6 +146,61 @@ public class ventana extends JFrame {
                 txt_buscar.setForeground(colorSeleccionado);
             }
         });
+
+        // Asignar icono al botón Agregar
+        try {
+            ImageIcon addIcon = new ImageIcon(getClass().getResource("/icons/agregar.png"));
+            if (addIcon.getIconWidth() == -1) {
+                System.out.println("Icono Agregar no encontrado.");
+            }
+            btn_add.setIcon(addIcon);
+        } catch (Exception e) {
+            System.out.println("Error al cargar el icono Agregar: " + e.getMessage());
+        }
+
+        // Asignar icono al botón Modificar
+        try {
+            ImageIcon modIcon = new ImageIcon(getClass().getResource("/icons/modificar.png"));
+            if (modIcon.getIconWidth() == -1) {
+                System.out.println("Icono Modificar no encontrado.");
+            }
+            btn_modificar.setIcon(modIcon);
+        } catch (Exception e) {
+            System.out.println("Error al cargar el icono Modificar: " + e.getMessage());
+        }
+
+        // Asignar icono al botón Eliminar
+        try {
+            ImageIcon delIcon = new ImageIcon(getClass().getResource("/icons/eliminar.png"));
+            if (delIcon.getIconWidth() == -1) {
+                System.out.println("Icono Eliminar no encontrado.");
+            }
+            btn_eliminar.setIcon(delIcon);
+        } catch (Exception e) {
+            System.out.println("Error al cargar el icono Eliminar: " + e.getMessage());
+        }
+
+        // Redimensionar los iconos si es necesario
+        btn_add.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/icons/agregar.png")).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        btn_modificar.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/icons/modificar.png")).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+        btn_eliminar.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/icons/eliminar.png")).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+    }
+
+    // Método para actualizar los textos de la interfaz
+    private void actualizarTextoComponentes() {
+        lblFuente.setText(LanguageManager.getMessage("fuente"));
+        lblIdioma.setText(LanguageManager.getMessage("idioma"));
+        lblColor.setText(LanguageManager.getMessage("color"));
+        btn_add.setText(LanguageManager.getMessage("add"));
+        btn_modificar.setText(LanguageManager.getMessage("edit"));
+        btn_eliminar.setText(LanguageManager.getMessage("delete"));
+        btn_exportar.setText(LanguageManager.getMessage("export"));
+        lbl_totalContactos.setText(LanguageManager.getMessage("totalContactos"));
+        lbl_favoritos.setText(LanguageManager.getMessage("favoritos"));
+        lbl_familia.setText(LanguageManager.getMessage("familia"));
+        lbl_amigos.setText(LanguageManager.getMessage("amigos"));
+        lbl_trabajo.setText(LanguageManager.getMessage("trabajo"));
+        lblBuscar.setText(LanguageManager.getMessage("buscar"));
     }
 
     private void addContactoFields(JPanel panel) {
@@ -252,31 +324,12 @@ public class ventana extends JFrame {
         btn_exportar.setBounds(50, 260, 200, 40);
         panel.add(btn_exportar);
     }
-    
-    
 
+    @SuppressWarnings("unchecked")
     private void initCategorias() {
-        cmb_categoria.addItem("Familia");
-        cmb_categoria.addItem("Amigos");
-        cmb_categoria.addItem("Trabajo");
+        String[] categorias = { "Elija una Categoria", "Familia", "Amigos", "Trabajo" };
+        for (String categoria : categorias) {
+            cmb_categoria.addItem(categoria);
+        }
     }
-
-    // MÉTODO MAIN
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ventana frame = new ventana();
-            frame.setVisible(true);
-            
-        });
-    }
-
-	public ResourceBundle getBundle() {
-		return bundle;
-	}
-
-	public void setBundle(ResourceBundle bundle) {
-		this.bundle = bundle;
-	}
-    
-    
 }
